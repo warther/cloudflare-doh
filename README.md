@@ -1,5 +1,7 @@
 # Cloudflare DoH 转发代理
 
+![使用演示](https://i.imgur.com/hu6F10P.gif)
+
 这是一个基于 Cloudflare Workers 的 DNS over HTTPS (DoH) 转发代理服务。本服务可以根据路径将请求转发到不同的 DoH 提供商，同时保留查询参数。
 
 ## 功能特点
@@ -32,12 +34,12 @@ Worker 可以使用默认配置直接部署使用。
 
 ```json
 {
-  "/path-prefix": {
-    "targetDomain": "target.domain.com",
-    "pathMapping": {
-      "/source-path": "/target-path"
-    }
-  }
+	"/path-prefix": {
+		"targetDomain": "target.domain.com",
+		"pathMapping": {
+			"/source-path": "/target-path"
+		}
+	}
 }
 ```
 
@@ -45,24 +47,24 @@ Worker 可以使用默认配置直接部署使用。
 
 ```json
 {
-  "/google": {
-    "targetDomain": "dns.google",
-    "pathMapping": {
-      "/query-dns": "/dns-query"
-    }
-  },
-  "/cloudflare": {
-    "targetDomain": "one.one.one.one",
-    "pathMapping": {
-      "/query-dns": "/dns-query"
-    }
-  },
-  "/quad9": {
-    "targetDomain": "dns.quad9.net",
-    "pathMapping": {
-      "/query-dns": "/dns-query"
-    }
-  }
+	"/google": {
+		"targetDomain": "dns.google",
+		"pathMapping": {
+			"/query-dns": "/dns-query"
+		}
+	},
+	"/cloudflare": {
+		"targetDomain": "one.one.one.one",
+		"pathMapping": {
+			"/query-dns": "/dns-query"
+		}
+	},
+	"/quad9": {
+		"targetDomain": "dns.quad9.net",
+		"pathMapping": {
+			"/query-dns": "/dns-query"
+		}
+	}
 }
 ```
 
