@@ -329,8 +329,8 @@ const HOMEPAGE_HTML = `<!DOCTYPE html>
 				  </ol>
 			  </div>
   
+              <h2>操作系统级别设置</h3>
 			  <div class="card">
-				  <h3>操作系统级别设置</h3>
 				  <h4>Windows 11 设置</h4>
 				  <ol>
 					  <li>打开设置 &gt; 网络和 Internet &gt; Wi-Fi 或以太网（取决于您的连接类型）</li>
@@ -344,14 +344,30 @@ const HOMEPAGE_HTML = `<!DOCTYPE html>
 					  </li>
 				  </ol>
   
-				  <h4>macOS/iOS 设置</h4>
-				  <p>macOS 和 iOS 目前需要通过配置描述文件来设置 DoH。您可以使用第三方工具如 <a href="https://dns.notjakob.com/tool.html"
-						  target="_blank">DNS Profile Creator</a> 创建配置文件。</p>
+                  <h4>macOS/iOS 设置</h4>
+                  <ol>
+                      <li>通过 <a href="https://dns.notjakob.com/tool.html" target="_blank">DNS Profile Creator</a> 等工具生成 DoH 配置描述文件</li>
+                      <li>将配置文件下载到您的设备上</li>
+                      <li>在 macOS 上：
+                          <ul>
+                              <li>双击下载的配置文件</li>
+                              <li>在系统设置中找到"配置文件"</li>
+                              <li>点击"安装"并输入管理员密码确认</li>
+                          </ul>
+                      </li>
+                      <li>在 iOS 上：
+                          <ul>
+                              <li>打开下载的配置文件</li>
+                              <li>点击"设置"应用程序中的通知</li>
+                              <li>点击"安装配置文件"</li>
+                              <li>输入设备密码确认安装</li>
+                          </ul>
+                      </li>
+                      <li>安装完成后，设备将自动使用配置的 DoH 服务器</li>
+                  </ol>
   
 				  <h4>Android 设置</h4>
-				  <ol>
-					  <li>Android 暂不支持 DoH</li>
-				  </ol>
+				  <p>Android 暂不支持 DoH</p>
 			  </div>
 		  </section>
   
