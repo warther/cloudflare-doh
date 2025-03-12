@@ -47,14 +47,59 @@ function getPathMappings(env) {
 
 /**
  * Serve homepage HTML
+ * @param {Object} env - Environment variables from Cloudflare Worker
+ * @param {Request} request - The original request
  * @returns {Response} The homepage response
  */
-async function serveHomepage() {
+async function serveHomepage(env, request) {
   // Try to fetch the homepage from assets
   try {
-    // This will look for index.html in your Worker's assets (when using Cloudflare Pages)
-    return await fetch(new Request("index.html", { method: "GET" }));
+    // First, check if we have __STATIC_CONTENT (for Workers Sites or Pages)
+    if (env && env.__STATIC_CONTENT) {
+      const indexPath = 'index.html';
+      const indexContent = await env.__STATIC_CONTENT.get(indexPath);
+      if (indexContent) {
+        return new Response(indexContent, {
+          headers: { 'Content-Type': 'text/html; charset=utf-8' }
+        });
+      }
+    }
+    
+    // Second, check if we have assets (for Cloudflare Pages)
+    if (env && env.ASSETS) {
+      // 使用正确的方式获取资源
+      const asset = await env.ASSETS.fetch(new Request('index.html'));
+      if (asset && asset.status === 200) {
+        return asset;
+      }
+    }
+    
+    // Fallback: Try the deprecated KV method (for older Workers)
+    if (env && env.STATIC_CONTENT) {
+      const indexContent = await env.STATIC_CONTENT.get('index.html');
+      if (indexContent) {
+        return new Response(indexContent, {
+          headers: { 'Content-Type': 'text/html; charset=utf-8' }
+        });
+      }
+    }
+
+    // If no worker-specific methods work, try directly fetching the current URL path
+    // but replace the path with /index.html
+    if (request) {
+      const url = new URL(request.url);
+      url.pathname = '/index.html';
+      const response = await fetch(url.toString());
+      if (response.status === 200) {
+        return response;
+      }
+    }
+    
+    // If all methods fail, fall back to the hardcoded HTML
+    throw new Error('Could not fetch index.html');
   } catch (error) {
+    console.error('Error serving homepage:', error);
+    
     // If the asset is not found or there's an error, return a simple message
     return new Response(
       `<html>
@@ -90,7 +135,7 @@ async function handleRequest(request, env) {
 
   // If the path is explicitly '/index.html' or '/', serve the homepage
   if (path === "/index.html" || path === "/") {
-    return serveHomepage();
+    return serveHomepage(env, request);
   }
 
   // Get the path mappings from env or defaults
@@ -133,7 +178,7 @@ async function handleRequest(request, env) {
   }
 
   // If no mapping is found, serve the homepage instead of 404
-  return serveHomepage();
+  return serveHomepage(env, request);
 }
 
 // Export the worker
