@@ -46,6 +46,38 @@ function getPathMappings(env) {
 }
 
 /**
+ * Serve homepage HTML
+ * @returns {Response} The homepage response
+ */
+async function serveHomepage() {
+  // Try to fetch the homepage from assets
+  try {
+    // This will look for index.html in your Worker's assets (when using Cloudflare Pages)
+    return await fetch(new Request("index.html", { method: "GET" }));
+  } catch (error) {
+    // If the asset is not found or there's an error, return a simple message
+    return new Response(
+      `<html>
+        <head>
+          <title>DoH 转发代理</title>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        </head>
+        <body>
+          <h1>DoH 转发代理服务</h1>
+          <p>这是一个 DNS over HTTPS 转发代理服务。请查看 GitHub 仓库了解用法。</p>
+          <a href="https://github.com/jqknono/cloudflare-doh">GitHub 仓库</a>
+        </body>
+      </html>`,
+      {
+        status: 200,
+        headers: { "Content-Type": "text/html; charset=utf-8" },
+      }
+    );
+  }
+}
+
+/**
  * Handle the incoming request
  * @param {Request} request - The incoming request
  * @param {Object} env - Environment variables from Cloudflare Worker
@@ -55,6 +87,11 @@ async function handleRequest(request, env) {
   const url = new URL(request.url);
   const path = url.pathname;
   const queryString = url.search; // Preserves the query string with the '?'
+
+  // If the path is explicitly '/index.html' or '/', serve the homepage
+  if (path === "/index.html" || path === "/") {
+    return serveHomepage();
+  }
 
   // Get the path mappings from env or defaults
   const pathMappings = getPathMappings(env);
@@ -95,8 +132,8 @@ async function handleRequest(request, env) {
     return fetch(newRequest);
   }
 
-  // If no mapping is found, return a 404 response
-  return new Response("Not Found", { status: 404 });
+  // If no mapping is found, serve the homepage instead of 404
+  return serveHomepage();
 }
 
 // Export the worker
