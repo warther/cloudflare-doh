@@ -6,22 +6,22 @@
 
 // Default configuration for path mappings
 const DEFAULT_PATH_MAPPINGS = {
-	'/g': {
+	'/google': {
 		targetDomain: 'dns.google',
 		pathMapping: {
-			'/q': '/dns-query',
+			'/dns-query': '/dns-query',
 		},
 	},
-	'/c': {
+	'/cloudflare': {
 		targetDomain: 'one.one.one.one',
 		pathMapping: {
-			'/q': '/dns-query',
+			'/dns-query': '/dns-query',
 		},
 	},
-	'/9': {
+	'/quad9': {
 		targetDomain: 'dns11.quad9.com',
 		pathMapping: {
-			'/q': '/dns-query',
+			'/dns-query': '/dns-query',
 		},
 	},
 	// Add more path mappings as needed
